@@ -1,7 +1,7 @@
 =======================
-python-package-template
+Mojo Results Package
 =======================
-This is a template repository that can be used to quickly create a python package project.
+This package contains code elements for working with automation results.
 
 =========================
 Features of this Template
@@ -10,28 +10,6 @@ Features of this Template
 * Virtual Environment Setup (Poetry)
 * PyPi Publishing
 * Sphinx Documentation
-
-========================
-How to Use This Template
-========================
-- Click the 'Use this template' button
-- Fill in the information to create your repository
-- Checkout your new repository
-- Change the following in 'repository-config.ini'
-
-  #. 'PROJECT NAME'
-  #. 'REPOSITORY_NAME'
-
-- If you have machine dependencies to add, put them in 'setup-ubuntu-machine'
-- Modify the pyproject.toml file with the correct package-name, author, publishing information, etc.
-- Rename the VSCODE workspace file 'mv workspaces/default-workspace.template workspaces/(project name).template'
-- Replace the README.rst file with your own README
-- Update the LICENSE.txt file with your copyright information and license.
-- Add your dependencies with python poetry 'poetry add (dependency name)'
-- Drop your package code in 'source/packages'
-- Modify the name of your package root in 'pyproject.toml'
-
-  #. 'packages = [{include="(root folder name)", from="source/packages"}]'
 
 =================
 Code Organization
