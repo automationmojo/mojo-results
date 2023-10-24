@@ -119,7 +119,7 @@ class ResultRecorder:
         ))
 
         self._summary = collections.OrderedDict((
-            ("title", self._title),
+            ("title", self._render_info.title),
             ("runid", self._runid),
             ("build", build_info),
             ("pipeline", pipeline_info),
@@ -129,7 +129,7 @@ class ResultRecorder:
             ("result", "RUNNING"),
             ("apod", self._apod),
             ("detail", None),
-            ("running", self._tasks)
+            ("running", self._running_tasks)
         ))
 
         self._lock = threading.Lock()
@@ -142,7 +142,7 @@ class ResultRecorder:
             Starts up the recording process of test results.
         """
         self.update_summary()
-        self._rout = open(self._result_filename, 'w')
+        self._rout = open(self._render_info.result_filename, 'w')
         return self
 
     def __exit__(self, ex_type: type, ex_inst: Exception, ex_tb: TracebackType) -> bool:
