@@ -214,18 +214,22 @@ class ResultRecorder:
             " ============== Test Summary ============== ",
         ]
 
-        if self._title:
-            lines.append("   Title: {}".format(self._title))
-        if self._release:
-            lines.append("  Release: {}".format(self._release))
-        if self._branch:
-            lines.append("  Branch: {}".format(self._branch))
-        if self._build:
-            lines.append("   Build: {}".format(self._build))
-        if self._flavor:
-            lines.append("  Flavor: {}".format(self._flavor))
-        if self._job_owner:
-            lines.append("   Owner: {}".format(self._job_owner))
+        if self._render_info.title:
+            lines.append("   Title: {}".format(self._render_info.title))
+
+        if self._build_info is not None:
+            if self._build_info.release:
+                lines.append("  Release: {}".format(self._build_info.release))
+            if self._build_info.branch:
+                lines.append("  Branch: {}".format(self._build_info.branch))
+            if self._build_info.build:
+                lines.append("   Build: {}".format(self._build_info.build))
+            if self._build_info.flavor:
+                lines.append("  Flavor: {}".format(self._build_info.flavor))
+
+        if self._job_info is not None:
+            if self._job_info.owner:
+                lines.append("   Owner: {}".format(self._job_info.owner))
 
         lines.extend([
             "   RunId: {}".format(self._runid),
@@ -244,8 +248,8 @@ class ResultRecorder:
             "OUTPUT PATH: {}".format(self._output_dir)
         ])
 
-        if "AKIT_SUMMARY_URL" in os.environ:
-            summary_url = os.environ["AKIT_SUMMARY_URL"]
+        if "MJR_SUMMARY_URL" in os.environ:
+            summary_url = os.environ["MJR_SUMMARY_URL"]
             lines.append("SUMMARY URL: {}".format(summary_url))
 
         return lines
