@@ -27,5 +27,4 @@ class ResultCode(IntEnum):
     SKIPPED = 2
     ERRORED = 3
     FAILED = 4
-    PAUSED = 5
-    UNKOWN = 6
+    UNKOWN = 5
