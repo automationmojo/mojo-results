@@ -34,6 +34,7 @@ class ProgressInfo:
     range_max: str
     position: str
     status_code: ProgressCode
+    data: dict = {}
 
     def as_dict(self) -> dict:
 
@@ -45,7 +46,14 @@ class ProgressInfo:
             "range_min": self.range_min,
             "range_max": self.range_max,
             "position": self.position,
-            "status": self.status_code.name
+            "status": self.status_code.name,
+            "data": self.data
         }
 
         return rtnval
+    
+    @classmethod
+    def from_dict(data: dict) -> "ProgressInfo":
+        inst = ProgressInfo(data["id"], data["category"], data["moniker"], data["ptype"], data["range_min"],
+                            data["range_max"], data["position"], data["status_code"], data["data"])
+        return inst

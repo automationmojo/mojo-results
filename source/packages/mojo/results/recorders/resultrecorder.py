@@ -164,7 +164,15 @@ class ResultRecorder:
         """
             Get the result summary.
         """
-        return self._summary
+        rtnval = None
+
+        self._lock.acquire()
+        try:
+            rtnval = copy.deepcopy(self._summary)
+        finally:
+            self._lock.release()
+
+        return rtnval
 
     def finalize(self):
         """
