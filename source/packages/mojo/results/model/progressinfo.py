@@ -16,6 +16,9 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
+from typing import Optional
+
+
 from dataclasses import dataclass
 
 
@@ -34,7 +37,7 @@ class ProgressInfo:
     range_max: str
     position: str
     status_code: ProgressCode
-    data: dict = {}
+    data: Optional[dict] = None
 
     def as_dict(self) -> dict:
 
@@ -46,9 +49,11 @@ class ProgressInfo:
             "range_min": self.range_min,
             "range_max": self.range_max,
             "position": self.position,
-            "status": self.status_code.name,
-            "data": self.data
+            "status": self.status_code.name
         }
+
+        if self.data is None:
+            rtnval["data"] = {}
 
         return rtnval
     

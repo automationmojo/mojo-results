@@ -17,6 +17,9 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
+from typing import Optional
+
+
 from dataclasses import dataclass
 
 
@@ -25,4 +28,4 @@ class ForwardingInfo:
 
     forwarding_interval: float # The interval in seconds to use when forwarding job summary information
     forwarding_url: str # identifier such as a uuid which identifies a particular pipeline.
-    forwarding_headers: dict = {} # Headers to use when forwarding progress, results or summaries.
+    forwarding_headers: Optional[dict] = None # Headers to use when forwarding progress, results or summaries.

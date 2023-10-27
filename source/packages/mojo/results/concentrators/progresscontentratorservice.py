@@ -125,8 +125,9 @@ class ProgressConcentratorServer(ThreadingMixIn, HTTPServer):
         forwarding_interval = self._forwarding_info.forwarding_interval
         forwarding_url = self._forwarding_info.forwarding_url
         forwarding_headers = self._forwarding_info.forwarding_headers
-        
-        headers.update(forwarding_headers)
+
+        if forwarding_headers is not None:
+            headers.update(forwarding_headers)
 
         start_gate.set()
 
