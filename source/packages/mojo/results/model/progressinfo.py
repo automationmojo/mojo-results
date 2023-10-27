@@ -36,7 +36,7 @@ class ProgressInfo:
     range_min: str
     range_max: str
     position: str
-    status_code: ProgressCode
+    status: ProgressCode
     data: Optional[dict] = None
 
     def as_dict(self) -> dict:
@@ -49,7 +49,7 @@ class ProgressInfo:
             "range_min": self.range_min,
             "range_max": self.range_max,
             "position": self.position,
-            "status": self.status_code.name
+            "status": self.status.name
         }
 
         if self.data is None:
@@ -60,5 +60,5 @@ class ProgressInfo:
     @classmethod
     def from_dict(data: dict) -> "ProgressInfo":
         inst = ProgressInfo(data["id"], data["category"], data["moniker"], data["ptype"], data["range_min"],
-                            data["range_max"], data["position"], data["status_code"], data["data"])
+                            data["range_max"], data["position"], data["status"], data["data"])
         return inst

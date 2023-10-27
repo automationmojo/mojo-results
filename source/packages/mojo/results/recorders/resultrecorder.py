@@ -308,7 +308,7 @@ class ResultRecorder:
 
         self._lock.acquire()
         try:
-            if progress.status_code == ProgressCode.Completed:
+            if progress.status == ProgressCode.Completed:
                 del self._running_tasks[progress.id]
             else:
                 self._running_tasks[progress.id] = progress
