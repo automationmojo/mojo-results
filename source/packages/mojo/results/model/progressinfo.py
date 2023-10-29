@@ -20,6 +20,7 @@ from typing import Optional
 
 
 from dataclasses import dataclass
+from datetime import datetime
 
 
 from mojo.results.model.progresscode import ProgressCode
@@ -37,6 +38,7 @@ class ProgressInfo:
     range_max: str
     position: str
     status: ProgressCode
+    when: datetime
     data: Optional[dict] = None
 
     def as_dict(self) -> dict:
@@ -49,7 +51,8 @@ class ProgressInfo:
             "range_min": self.range_min,
             "range_max": self.range_max,
             "position": self.position,
-            "status": self.status.name
+            "status": self.status.name,
+            "when": self.when
         }
 
         if self.data is None:
@@ -60,5 +63,5 @@ class ProgressInfo:
     @classmethod
     def from_dict(data: dict) -> "ProgressInfo":
         inst = ProgressInfo(data["id"], data["category"], data["moniker"], data["ptype"], data["range_min"],
-                            data["range_max"], data["position"], data["status"], data["data"])
+                            data["range_max"], data["position"], data["status"], data["when"], data["data"])
         return inst
