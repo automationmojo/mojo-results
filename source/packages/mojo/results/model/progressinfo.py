@@ -52,7 +52,7 @@ class ProgressInfo:
             "range_max": self.range_max,
             "position": self.position,
             "status": self.status.name,
-            "when": self.when
+            "when": self.when.isoformat()
         }
 
         if self.data is None:
@@ -62,6 +62,8 @@ class ProgressInfo:
     
     @classmethod
     def from_dict(data: dict) -> "ProgressInfo":
+        when = datetime.fromisoformat(data["when"])
+
         inst = ProgressInfo(data["id"], data["category"], data["moniker"], data["ptype"], data["range_min"],
-                            data["range_max"], data["position"], data["status"], data["when"], data["data"])
+                            data["range_max"], data["position"], data["status"], when, data["data"])
         return inst
