@@ -67,3 +67,7 @@ class ProgressInfo:
         inst = ProgressInfo(data["id"], data["category"], data["moniker"], data["ptype"], data["range_min"],
                             data["range_max"], data["position"], data["status"], when, data["data"])
         return inst
+    
+    def __repr__(self):
+        reprval = repr(self.as_dict())
+        return reprval
