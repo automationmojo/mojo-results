@@ -55,7 +55,9 @@ class ProgressInfo:
             "when": self.when.isoformat()
         }
 
-        if self.data is None:
+        if self.data is not None:
+            rtnval["data"] = self.data
+        else:
             rtnval["data"] = {}
 
         return rtnval
