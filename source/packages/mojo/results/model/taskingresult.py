@@ -62,13 +62,13 @@ class TaskingResult:
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, inst_id: str, name: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET,
+    def __init__(self, task_id: str, name: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET,
                  parent_inst: Optional[str] = None):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
 
-            :param inst_id: The unique identifier for this task node.
+            :param task_id: The unique identifier for this task node.
             :param name: The name of the result container.
             :param result_type: The type :class:`ResultType` type code of result container.
             :param result_code: The result code to initialize the result node to.
@@ -76,9 +76,9 @@ class TaskingResult:
         """
         super().__init__()
 
-        self._name = name
+        self._task_name = name
 
-        self._inst_id = inst_id
+        self._task_id = task_id
         self._parent_inst = parent_inst
 
         self._result_code = result_code
@@ -109,11 +109,11 @@ class TaskingResult:
         return self._failures
 
     @property
-    def parent_inst(self):
+    def parent_id(self):
         """
             The unique identifier fo this result nodes parent.
         """
-        return self._parent_inst
+        return self._parent_id
 
     @property
     def result_code(self):
@@ -123,25 +123,25 @@ class TaskingResult:
         return self._result_code
 
     @property
-    def inst_id(self):
-        """
-            The unique identifier to link this result container with its children.
-        """
-        return self._inst_id
-
-    @property
-    def name(self):
-        """
-            The name of the result item.
-        """
-        return self._name
-
-    @property
     def result_type(self):
         """
             The :class:`ResultType` code associated with this result node.
         """
         return self._result_type
+    
+    @property
+    def task_id(self):
+        """
+            The unique identifier to link this result container with its children.
+        """
+        return self._task_id
+
+    @property
+    def task_name(self):
+        """
+            The name of the result item.
+        """
+        return self._task_name
 
     def add_error(self, trace_detail: TracebackDetail):
         """
@@ -202,17 +202,6 @@ class TaskingResult:
         self._result_code = ResultCode.PASSED
         return
 
-    def mark_skip(self, reason: str, bug: str):
-        """
-            Marks this result with a :class:`ResultCode` of ResultCode.SKIPPED
-
-            :param reason: The reason the task or test this result is associated with was skipped.
-        """
-        self._reason = reason
-        self._bug = bug
-        self._result_code = ResultCode.SKIPPED
-        return
-
     def as_dict(self) -> collections.OrderedDict:
         """
             Converts the result node instance to an :class:`collections.OrderedDict` object.
@@ -226,13 +215,6 @@ class TaskingResult:
             ("warnings", self._warnings)
         ]
 
-        if self._reason is not None:
-            detail_items.append(("reason", self._reason))
-        
-        if self._bug is not None:
-            detail_items.append(("bug", self._bug))
-        
-
         detail = collections.OrderedDict(detail_items)
 
         if self._docstr is not None:
@@ -242,8 +224,8 @@ class TaskingResult:
         stop_datetime = format_time_with_fractional(self._stop)
 
         rninfo = collections.OrderedDict([
-            ("name", self._name),
-            ("instance", self._inst_id),
+            ("task_name", self._task_name),
+            ("task_id", self._task_id),
             ("parent", self._parent_inst),
             ("rtype", self._result_type.name),
             ("result", self._result_code.name),
@@ -263,6 +245,7 @@ class TaskingResult:
         rnstr = json.dumps(rninfo, indent=4)
 
         return rnstr
+
 
 class TaskingResultFormatter(Protocol):
     
