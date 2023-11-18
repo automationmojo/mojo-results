@@ -17,58 +17,39 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Any, Dict, List, Optional, Protocol
+from typing import List, Protocol
 
 import collections
 import json
 import os
-import time
+
+from datetime import datetime
 
 from dataclasses import asdict as dataclass_as_dict
 
-
-def indent_lines_list(msglines: List[str], level: int, indent: int=4) -> List[str]:
-    """
-        Takes a list of str that has already been split on new-lines and indents each line
-        to the specified level using 'indent' spaces for each level.
-
-        :param msglines: The list of text lines to indent.
-        :param level: The integer level number to indent to.
-        :param indent: The number of spaces to indent for each level.
-
-        :returns: The indenting lines
-    """
-    outlines = [] 
-
-    pfx = " " * (level * indent)
-
-    for nxtline in msglines:
-        outlines.append(f"{pfx}{nxtline}")
-
-    return outlines
-
-
 from mojo.errors.xtraceback import TracebackDetail
+
+from mojo.xmods.xdatetime import format_datetime_with_fractional
+from mojo.xmods.xformatting import indent_lines_list
+
 from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resulttype import ResultType
 
-from mojo.xmods.xdatetime import format_time_with_fractional
 
 
 class TaskingResult:
     """
-        The :class:`TaskNode` object marks a task node that contains results from a task, test or step in a result tree.  The
+        The :class:`TaskingResult` object marks a task node that contains results from a task, test or step in a result tree.  The
         result trees only store results that contain task data not associated with the hierarchy of the results.  The result tree
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, task_id: str, name: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET,
-                 parent_inst: Optional[str] = None):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
 
-            :param task_id: The unique identifier for this task node.
+            :param inst_id: The unique identifier for this task node.
             :param name: The name of the result container.
             :param result_type: The type :class:`ResultType` type code of result container.
             :param result_code: The result code to initialize the result node to.
@@ -76,15 +57,15 @@ class TaskingResult:
         """
         super().__init__()
 
-        self._task_name = name
+        self._inst_id = inst_id
+        self._name = name
 
-        self._task_id = task_id
         self._parent_inst = parent_inst
 
         self._result_code = result_code
         self._result_type = result_type
 
-        self._start = time.time()
+        self._start = datetime.now()
         self._stop = None
 
         self._errors = []
@@ -109,11 +90,11 @@ class TaskingResult:
         return self._failures
 
     @property
-    def parent_id(self):
+    def parent_inst(self):
         """
             The unique identifier fo this result nodes parent.
         """
-        return self._parent_id
+        return self._parent_inst
 
     @property
     def result_code(self):
@@ -130,18 +111,32 @@ class TaskingResult:
         return self._result_type
     
     @property
-    def task_id(self):
+    def start(self) -> datetime:
+        """
+            The 'start' timestamp
+        """
+        return self._start
+
+    @property
+    def stop(self) -> datetime:
+        """
+            The 'stop' timestamp.
+        """
+        return self._stop
+
+    @property
+    def inst_id(self):
         """
             The unique identifier to link this result container with its children.
         """
-        return self._task_id
+        return self._inst_id
 
     @property
-    def task_name(self):
+    def name(self):
         """
             The name of the result item.
         """
-        return self._task_name
+        return self._name
 
     def add_error(self, trace_detail: TracebackDetail):
         """
@@ -184,7 +179,7 @@ class TaskingResult:
             Finalizes the :class:`ResultCode` code for this result node based on whether
             there were any errors or failures added to the node.
         """
-        self._stop = time.time()
+        self._stop = datetime.now()
 
         if len(self._failures) > 0:
             self._result_code = ResultCode.FAILED
@@ -220,12 +215,12 @@ class TaskingResult:
         if self._docstr is not None:
             detail["documentation"] =  self._docstr
 
-        start_datetime = format_time_with_fractional(self._start)
-        stop_datetime = format_time_with_fractional(self._stop)
+        start_datetime = format_datetime_with_fractional(self._start)
+        stop_datetime = format_datetime_with_fractional(self._stop)
 
         rninfo = collections.OrderedDict([
-            ("task_name", self._task_name),
-            ("task_id", self._task_id),
+            ("name", self._name),
+            ("instance", self._inst_id),
             ("parent", self._parent_inst),
             ("rtype", self._result_type.name),
             ("result", self._result_code.name),
