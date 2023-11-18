@@ -68,6 +68,8 @@ class TaskingResult:
         self._start = datetime.now()
         self._stop = None
 
+
+
         self._errors = []
         self._failures = []
         self._warnings = []
@@ -181,13 +183,21 @@ class TaskingResult:
         """
         self._stop = datetime.now()
 
-        if len(self._failures) > 0:
-            self._result_code = ResultCode.FAILED
-        elif len(self._errors) > 0:
-            self._result_code = ResultCode.ERRORED
-        elif self._result_code == ResultCode.UNSET:
-            self._result_code = ResultCode.UNKOWN
+        if self._result_code == ResultCode.UNSET:
+            if len(self._failures) > 0:
+                self._result_code = ResultCode.FAILED
+            elif len(self._errors) > 0:
+                self._result_code = ResultCode.ERRORED
+            else:
+                self._result_code = ResultCode.PASSED
 
+        return
+
+    def mark_cancelled(self):
+        """
+            Mark the task as cancelled.
+        """
+        self._result_code = ResultCode.CANCELLED
         return
 
     def mark_passed(self):
