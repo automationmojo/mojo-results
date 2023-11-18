@@ -1,8 +1,8 @@
 """
-.. module:: resultcontainer
+.. module:: taskgroup
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`ResultContainer` object used to serve as a
-               tree node container for child results.
+    :synopsis: Module containing the :class:`TaskingGroup` object used to serve as a
+               tree node group for a group of tasks.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -23,19 +23,19 @@ import json
 
 from mojo.results.model.resulttype import ResultType
 
-class ResultContainer:
+class TaskingGroup:
     """
-        The :class:`ResultContainer` instances are container nodes that are used to link result nodes in the
-        result tree.  The :class:`ResultContainer` nodes do not contain result data but link data so the data can
+        The :class:`TaskingGroup` instances are group nodes that are used to link result nodes in the
+        result tree.  The :class:`TaskingGroup` nodes do not contain result data but link data so the data can
         be computed on demand.
     """
     def __init__(self, inst_id: str, name: str, result_type: ResultType, parent_inst: Optional[str] = None):
         """
-            Creates an instance of a result container.
+            Creates an instance of a result group.
 
-            :param inst_id: The unique identifier to link this result container with its children.
-            :param name: The name of the result container.
-            :param result_type: The type :class:`ResultType` type code of result container.
+            :param inst_id: The unique identifier to link this result group with its children.
+            :param name: The name of the result group.
+            :param result_type: The type :class:`ResultType` type code of result group.
             :param parent_inst: The unique identifier fo this result nodes parent.
         """
         super().__init__()
@@ -56,27 +56,27 @@ class ResultContainer:
     @property
     def inst_id(self) -> str:
         """
-            The unique identifier to link this result container with its children.
+            The unique identifier to link this result group with its children.
         """
         return self._inst_id
 
     @property
     def name(self) -> str:
         """
-            The name of the result container.
+            The name of the result group.
         """
         return self._name
 
     @property
     def result_type(self) -> ResultType:
         """
-            The type :class:`ResultType` type code of result container.
+            The type :class:`ResultType` type code of result group.
         """
         return self._result_type
 
     def as_dict(self) -> collections.OrderedDict:
         """
-            Converts the result container instance to an :class:`collections.OrderedDict` object.
+            Converts the result group instance to an :class:`collections.OrderedDict` object.
         """
         rcinfo = collections.OrderedDict([
             ("name", self._name),
@@ -89,7 +89,7 @@ class ResultContainer:
 
     def to_json(self) -> str:
         """
-            Converts the result container instance to JSON format.
+            Converts the result group instance to JSON format.
         """
         rcinfo = self.as_dict()
 
