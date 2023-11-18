@@ -270,7 +270,7 @@ def assert_tasking_results(results: List[TaskingResult], context_message: str,
     res: TaskingResult
 
     for res in results:
-        if res.result_code == 0:
+        if res.result_code == ResultCode.PASSED:
             if len(res.errors) > 0 or len(res.failures) > 0:
                 raise RuntimeError("We should never have an exception and a result code of 0.")
             
