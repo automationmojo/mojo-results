@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Protocol
 
 import collections
 import json
@@ -225,3 +225,11 @@ class TaskingResult:
         rnstr = json.dumps(rninfo, indent=4)
 
         return rnstr
+
+class TaskingResultFormatter(Protocol):
+    
+    def __call__(self, result: TaskingResult) -> List[str]: ...
+
+
+def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
+    return
