@@ -29,14 +29,14 @@ class TaskingGroup:
         result tree.  The :class:`TaskingGroup` nodes do not contain result data but link data so the data can
         be computed on demand.
     """
-    def __init__(self, inst_id: str, name: str, result_type: ResultType, parent_inst: Optional[str] = None):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType):
         """
             Creates an instance of a result group.
 
             :param inst_id: The unique identifier to link this result group with its children.
             :param name: The name of the result group.
-            :param result_type: The type :class:`ResultType` type code of result group.
             :param parent_inst: The unique identifier fo this result nodes parent.
+            :param result_type: The type :class:`ResultType` type code of result group.
         """
         super().__init__()
 

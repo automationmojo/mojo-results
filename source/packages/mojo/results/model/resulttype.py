@@ -32,3 +32,5 @@ class ResultType(IntEnum):
     TEST = 6
     STEP_CONATINER = 7
     STEP = 8
+    TASKING_GROUP = 9
+    TASKING = 10
