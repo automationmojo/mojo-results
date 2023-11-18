@@ -21,15 +21,39 @@ from typing import Any, Dict, List, Optional, Protocol
 
 import collections
 import json
+import os
 import time
 
 from dataclasses import asdict as dataclass_as_dict
+
+
+def indent_lines_list(msglines: List[str], level: int, indent: int=4) -> List[str]:
+    """
+        Takes a list of str that has already been split on new-lines and indents each line
+        to the specified level using 'indent' spaces for each level.
+
+        :param msglines: The list of text lines to indent.
+        :param level: The integer level number to indent to.
+        :param indent: The number of spaces to indent for each level.
+
+        :returns: The indenting lines
+    """
+    outlines = [] 
+
+    pfx = " " * (level * indent)
+
+    for nxtline in msglines:
+        outlines.append(f"{pfx}{nxtline}")
+
+    return outlines
+
 
 from mojo.errors.xtraceback import TracebackDetail
 from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resulttype import ResultType
 
 from mojo.xmods.xdatetime import format_time_with_fractional
+
 
 class TaskingResult:
     """
@@ -69,6 +93,20 @@ class TaskingResult:
         self._docstr = None
         
         return
+
+    @property
+    def errors(self):
+        """
+            The list of error details.
+        """
+        return self._errors
+    
+    @property
+    def failures(self):
+        """
+            The list of failures details.
+        """
+        return self._failures
 
     @property
     def parent_inst(self):
@@ -225,3 +263,50 @@ class TaskingResult:
         rnstr = json.dumps(rninfo, indent=4)
 
         return rnstr
+
+class TaskingResultFormatter(Protocol):
+    
+    def __call__(self, result: TaskingResult) -> List[str]: ...
+
+
+def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
+    return
+
+def assert_tasking_results(results: List[TaskingResult], context_message: str,
+                           result_formatter: TaskingResultFormatter = default_tasking_result_formatter):
+
+    #errored = []
+    failed_taskings = []
+    passed_taskings = []
+
+    res: TaskingResult
+
+    for res in results:
+        if res.result_code == 0:
+            if len(res.errors) > 0 or len(res.failures) > 0:
+                raise RuntimeError("We should never have an exception and a result code of 0.")
+            
+            passed_taskings.append(res)
+
+        else:
+            failed_taskings.append(res)
+
+    # TODO: Handle errors first as they imply a different kind of problem.
+
+    if len(failed_taskings) > 0:
+        err_msg_lines = [
+            context_message,
+            "RESULTS:"
+        ]
+
+        for res in results:
+            fmt_res_lines = result_formatter(res)
+            fmt_res_lines = indent_lines_list(fmt_res_lines, 1)
+            err_msg_lines.extend(fmt_res_lines)
+            err_msg_lines.append("")
+
+        err_msg = os.linesep.join(err_msg_lines)
+
+        raise AssertionError(err_msg)
+
+    return
