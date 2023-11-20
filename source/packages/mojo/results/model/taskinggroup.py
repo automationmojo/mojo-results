@@ -104,16 +104,19 @@ class TaskingGroup:
             Converts the result group instance to an :class:`collections.OrderedDict` object.
         """
 
-        start_fmt = format_datetime_with_fractional(self._start)
-        stop_fmt = format_datetime_with_fractional(self._stop)
+        start_datetime = format_datetime_with_fractional(self._start)
+
+        stop_datetime = ""
+        if self._stop is not None:
+            stop_datetime = format_datetime_with_fractional(self._stop)
 
         rcinfo = collections.OrderedDict([
             ("name", self._name),
             ("instance", self._inst_id),
             ("parent", self._parent_inst),
             ("rtype", self._result_type.name),
-            ("start", start_fmt),
-            ('stop', stop_fmt)
+            ("start", start_datetime),
+            ('stop', stop_datetime)
         ])
 
         return rcinfo

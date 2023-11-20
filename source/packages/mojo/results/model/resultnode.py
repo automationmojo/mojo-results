@@ -211,7 +211,10 @@ class ResultNode:
             detail["documentation"] =  self._docstr
 
         start_datetime = format_datetime_with_fractional(self._start)
-        stop_datetime = format_datetime_with_fractional(self._stop)
+
+        stop_datetime = ""
+        if self._stop is not None:
+            stop_datetime = format_datetime_with_fractional(self._stop)
 
         rninfo = collections.OrderedDict([
             ("name", self._name),
