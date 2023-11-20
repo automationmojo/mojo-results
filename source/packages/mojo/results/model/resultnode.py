@@ -23,13 +23,15 @@ import collections
 import json
 import time
 
+from datetime import datetime
+
 from dataclasses import asdict as dataclass_as_dict
 
 from mojo.errors.xtraceback import TracebackDetail
 from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resulttype import ResultType
 
-from mojo.xmods.xdatetime import format_time_with_fractional
+from mojo.xmods.xdatetime import format_datetime_with_fractional
 
 class ResultNode:
     """
@@ -61,7 +63,7 @@ class ResultNode:
         self._parent_inst = parent_inst
         self._result_code = result_code
         self._result_type = result_type
-        self._start = time.time()
+        self._start = datetime.now()
         self._stop = None
         self._errors = []
         self._failures = []
@@ -154,7 +156,7 @@ class ResultNode:
             Finalizes the :class:`ResultCode` code for this result node based on whether
             there were any errors or failures added to the node.
         """
-        self._stop = time.time()
+        self._stop = datetime.now()
 
         if len(self._failures) > 0:
             self._result_code = ResultCode.FAILED
@@ -208,8 +210,8 @@ class ResultNode:
         if self._docstr is not None:
             detail["documentation"] =  self._docstr
 
-        start_datetime = format_time_with_fractional(self._start)
-        stop_datetime = format_time_with_fractional(self._stop)
+        start_datetime = format_datetime_with_fractional(self._start)
+        stop_datetime = format_datetime_with_fractional(self._stop)
 
         rninfo = collections.OrderedDict([
             ("name", self._name),

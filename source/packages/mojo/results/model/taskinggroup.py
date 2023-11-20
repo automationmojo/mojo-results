@@ -21,7 +21,12 @@ from typing import Optional
 import collections
 import json
 
+from datetime import datatime
+
 from mojo.results.model.resulttype import ResultType
+
+from mojo.xmods.xdatetime import format_datetime_with_fractional
+
 
 class TaskingGroup:
     """
@@ -44,6 +49,8 @@ class TaskingGroup:
         self._name = name
         self._parent_inst = parent_inst
         self._result_type = result_type
+        self._start = datetime.now()
+        self._stop = None
         return
 
     @property
@@ -74,15 +81,35 @@ class TaskingGroup:
         """
         return self._result_type
 
+    @property
+    def start(self):
+        """
+            The start timestamp of the tasking group.
+        """
+        return self._start
+    
+    @property
+    def stop(self):
+        """
+            The stop timestamp of the tasking group.
+        """
+        return self._stop
+
     def as_dict(self) -> collections.OrderedDict:
         """
             Converts the result group instance to an :class:`collections.OrderedDict` object.
         """
+
+        start_fmt = format_datetime_with_fractional(self._start)
+        stop_fmt = format_datetime_with_fractional(self._stop)
+
         rcinfo = collections.OrderedDict([
             ("name", self._name),
             ("instance", self._inst_id),
             ("parent", self._parent_inst),
-            ("rtype", self._result_type.name)
+            ("rtype", self._result_type.name),
+            ("start", start_fmt),
+            ('stop', stop_fmt)
         ])
 
         return rcinfo
