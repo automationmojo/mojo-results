@@ -21,7 +21,7 @@ from typing import Optional
 import collections
 import json
 
-from datetime import datatime
+from datetime import datetime
 
 from mojo.results.model.resulttype import ResultType
 
@@ -94,6 +94,10 @@ class TaskingGroup:
             The stop timestamp of the tasking group.
         """
         return self._stop
+
+    def finalize(self):
+        self._stop = datetime.now()
+        return
 
     def as_dict(self) -> collections.OrderedDict:
         """
