@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
 import collections
 import json
@@ -26,6 +26,13 @@ import os
 from datetime import datetime
 
 from dataclasses import asdict as dataclass_as_dict
+
+from mojo.errors.exceptions import (
+    TaskingCancelled,
+    TaskingGroupAssertionError,
+    TaskingGroupCancelled,
+    TaskingGroupRuntimeError
+)
 
 from mojo.errors.xtraceback import TracebackDetail
 
@@ -260,10 +267,13 @@ class TaskingResultFormatter(Protocol):
 def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
     return
 
-def assert_tasking_results(results: List[TaskingResult], context_message: str,
+
+def verify_tasking_results(results: List[TaskingResult], context_message: str, group_name: Optional[str] = None,
                            result_formatter: TaskingResultFormatter = default_tasking_result_formatter):
 
-    #errored = []
+    unknown_taskings = []
+    cancelled_taskings = []
+    errored_taskings = []
     failed_taskings = []
     passed_taskings = []
 
@@ -275,18 +285,39 @@ def assert_tasking_results(results: List[TaskingResult], context_message: str,
                 raise RuntimeError("We should never have an exception and a result code of 0.")
             
             passed_taskings.append(res)
-
-        else:
+        elif res.result_code == ResultCode.ERRORED:
+            errored_taskings.append(res)
+        elif res.result_code == ResultCode.FAILED:
             failed_taskings.append(res)
+        elif res.result_code == ResultCode.CANCELLED:
+            cancelled_taskings.append(res)
+        else:
+            unknown_taskings.append(res)
 
-    # TODO: Handle errors first as they imply a different kind of problem.
+    if len(unknown_taskings) > 0:
+        # We had taskings results of an unknown type so this condition needs to have
+        # a runtime error as it should not happen
+        err_msg = f"Tasking group='{group_name}' had unknown results."
+        raise TaskingGroupRuntimeError(err_msg)
 
-    if len(failed_taskings) > 0:
+    elif len(cancelled_taskings) > 0:
+        # All of the tasking result states were of known type, but we had some cancelled
+        # taskings, so raise the cancelled error.
+        err_msg = f"Tasking group='{group_name}' had cancelled tasks."
+        raise TaskingGroupCancelled(err_msg)
+
+    elif len(errored_taskings) > 0:
+        # If we had any error tasks, we need to raise a non AssertionError based
+        # exception
+        err_msg = f"Tasking group='{group_name}' encountered Non asserted errors."
+        raise TaskingGroupRuntimeError(err_msg)
+
+    elif len(failed_taskings) > 0:
         err_msg_lines = [
             context_message,
             "RESULTS:"
         ]
-
+        
         for res in results:
             fmt_res_lines = result_formatter(res)
             fmt_res_lines = indent_lines_list(fmt_res_lines, 1)
@@ -295,6 +326,6 @@ def assert_tasking_results(results: List[TaskingResult], context_message: str,
 
         err_msg = os.linesep.join(err_msg_lines)
 
-        raise AssertionError(err_msg)
+        raise TaskingGroupAssertionError(err_msg)
 
     return
