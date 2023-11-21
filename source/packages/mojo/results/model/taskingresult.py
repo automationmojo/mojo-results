@@ -255,7 +255,7 @@ class TaskingResult:
             ("parent", self._parent_inst),
             ("rtype", self._result_type.name),
             ("result", self._result_code.name),
-            ("prefix", self._prefix)
+            ("prefix", self._prefix),
             ("start", start_datetime),
             ("stop", stop_datetime),
             ("detail", detail)
