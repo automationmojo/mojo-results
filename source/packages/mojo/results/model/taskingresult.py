@@ -51,16 +51,18 @@ class TaskingResult:
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType,
+                 result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
 
             :param inst_id: The unique identifier for this task node.
             :param name: The name of the result container.
+            :param parent_inst: The unique identifier fo this result nodes parent.
             :param result_type: The type :class:`ResultType` type code of result container.
             :param result_code: The result code to initialize the result node to.
-            :param parent_inst: The unique identifier fo this result nodes parent.
+            :param prefix: A prefix for the tasking output folder.
         """
         super().__init__()
 
@@ -71,6 +73,8 @@ class TaskingResult:
 
         self._result_code = result_code
         self._result_type = result_type
+
+        self._prefix = prefix
 
         self._start = datetime.now()
         self._stop = None
@@ -104,6 +108,13 @@ class TaskingResult:
             The unique identifier fo this result nodes parent.
         """
         return self._parent_inst
+
+    @property
+    def prefix(self):
+        """
+            The prefix that will be used for the tasking output folder.
+        """
+        return self._prefix
 
     @property
     def result_code(self):
@@ -244,6 +255,7 @@ class TaskingResult:
             ("parent", self._parent_inst),
             ("rtype", self._result_type.name),
             ("result", self._result_code.name),
+            ("prefix", self._prefix)
             ("start", start_datetime),
             ("stop", stop_datetime),
             ("detail", detail)

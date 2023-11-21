@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mojo-results"
 description = "The Automation Mojo Results Package"
-version = "0.0.28"
+version = "0.0.29"
 authors = ["Myron W. Walker"]
 readme = "README.rst"
 license = "LICENSE.txt"
