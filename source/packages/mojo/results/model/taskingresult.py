@@ -268,7 +268,45 @@ class TaskingResultFormatter(Protocol):
 
 
 def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
-    return
+
+    start_datetime = format_datetime_with_fractional(result.start)
+
+    stop_datetime = ""
+    if result.stop is not None:
+        stop_datetime = format_datetime_with_fractional(result.stop)
+
+    task_lines = [
+        f"Task - {result.name}",
+        f"instance: {result.inst_id}",
+        f"parent: {result.parent_inst}",
+        f"rtype: {result.result_type.name}",
+        f"result: {result.result_code.name}",
+        f"start: {start_datetime}",
+        f"stop: {stop_datetime}"
+        f"ERRORS:"
+    ]
+
+    error_lines = []
+    for item in result.errors:
+        error_lines.extend(item)
+        error_lines.append("")
+
+    error_lines = indent_lines_list(error_lines, level=1)
+
+    task_lines.extend(error_lines)
+
+    task_lines.append("FAILURES:")
+
+    failure_lines = []
+    for item in result.failures:
+        failure_lines.extend(item)
+        failure_lines.append("")
+
+    failure_lines = indent_lines_list(failure_lines, level=1)
+
+    task_lines.extend(failure_lines)
+
+    return task_lines
 
 
 def verify_tasking_results(results: List[TaskingResult], context_message: str, group_name: Optional[str] = None,
