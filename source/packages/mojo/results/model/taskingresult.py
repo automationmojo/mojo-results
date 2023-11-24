@@ -40,19 +40,19 @@ from mojo.xmods.xdatetime import format_datetime_with_fractional
 from mojo.xmods.xformatting import indent_lines_list
 
 from mojo.results.model.resultcode import ResultCode
+from mojo.results.model.resultnode import ResultNode
 from mojo.results.model.resulttype import ResultType
 
 
 
-class TaskingResult:
+class TaskingResult(ResultNode):
     """
         The :class:`TaskingResult` object marks a task node that contains results from a task, test or step in a result tree.  The
         result trees only store results that contain task data not associated with the hierarchy of the results.  The result tree
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType,
-                 result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
@@ -64,50 +64,10 @@ class TaskingResult:
             :param result_code: The result code to initialize the result node to.
             :param prefix: A prefix for the tasking output folder.
         """
-        super().__init__()
+        super().__init__(inst_id, name, ResultType.TASKING, result_code=result_code, parent_inst=parent_inst)
 
-        self._inst_id = inst_id
-        self._name = name
-
-        self._parent_inst = parent_inst
-
-        self._result_code = result_code
-        self._result_type = result_type
-
-        self._prefix = prefix
-
-        self._start = datetime.now()
-        self._stop = None
-
-
-
-        self._errors = []
-        self._failures = []
-        self._warnings = []
-        self._docstr = None
-        
+        self._prefix = prefix        
         return
-
-    @property
-    def errors(self):
-        """
-            The list of error details.
-        """
-        return self._errors
-    
-    @property
-    def failures(self):
-        """
-            The list of failures details.
-        """
-        return self._failures
-
-    @property
-    def parent_inst(self):
-        """
-            The unique identifier fo this result nodes parent.
-        """
-        return self._parent_inst
 
     @property
     def prefix(self):
@@ -115,115 +75,6 @@ class TaskingResult:
             The prefix that will be used for the tasking output folder.
         """
         return self._prefix
-
-    @property
-    def result_code(self):
-        """
-            The type :class:`ResultType` type code of result container.
-        """
-        return self._result_code
-
-    @property
-    def result_type(self):
-        """
-            The :class:`ResultType` code associated with this result node.
-        """
-        return self._result_type
-    
-    @property
-    def start(self) -> datetime:
-        """
-            The 'start' timestamp
-        """
-        return self._start
-
-    @property
-    def stop(self) -> datetime:
-        """
-            The 'stop' timestamp.
-        """
-        return self._stop
-
-    @property
-    def inst_id(self):
-        """
-            The unique identifier to link this result container with its children.
-        """
-        return self._inst_id
-
-    @property
-    def name(self):
-        """
-            The name of the result item.
-        """
-        return self._name
-
-    def add_error(self, trace_detail: TracebackDetail):
-        """
-            Adds error trace lines for a single error to this result node.
-        """
-        self._errors.append(trace_detail)
-        return
-
-    def add_failure(self, trace_detail: TracebackDetail):
-        """
-            Adds failure trace lines for a single failure to this result node.
-        """
-        self._failures.append(trace_detail)
-        return
-
-    def add_warning(self, warn_lines: List[str]):
-        """
-            Adds warning trace lines for a single warning to this result node.
-        """
-        trim_lines = []
-        for nline in warn_lines:
-            nline = nline.rstrip().replace("\r\n", "\n")
-            if nline.find("\n") > -1:
-                split_lines = nline.split("\n")
-                trim_lines.extend(split_lines)
-            else:
-                trim_lines.append(nline)
-        self._warnings.append(trim_lines)
-        return
-
-    def set_documentation(self, docstr):
-        """
-            Sets the documentation string associated with this result node.
-        """
-        self._docstr = docstr
-        return
-
-    def finalize(self):
-        """
-            Finalizes the :class:`ResultCode` code for this result node based on whether
-            there were any errors or failures added to the node.
-        """
-        self._stop = datetime.now()
-
-        if self._result_code == ResultCode.UNSET:
-            if len(self._failures) > 0:
-                self._result_code = ResultCode.FAILED
-            elif len(self._errors) > 0:
-                self._result_code = ResultCode.ERRORED
-            else:
-                self._result_code = ResultCode.PASSED
-
-        return
-
-    def mark_cancelled(self):
-        """
-            Mark the task as cancelled.
-        """
-        self._result_code = ResultCode.CANCELLED
-        return
-
-    def mark_passed(self):
-        """
-            Marks this result with a :class:`ResultCode` of ResultCode.PASSED
-        """
-        self._result_code = ResultCode.PASSED
-        return
 
     def as_dict(self) -> collections.OrderedDict:
         """
@@ -262,16 +113,6 @@ class TaskingResult:
         ])
 
         return rninfo
-
-    def to_json(self) -> str:
-        """
-            Converts the result node instance to JSON format.
-        """
-        rninfo = self.as_dict()
-
-        rnstr = json.dumps(rninfo, indent=4)
-
-        return rnstr
 
 
 class TaskingResultFormatter(Protocol):

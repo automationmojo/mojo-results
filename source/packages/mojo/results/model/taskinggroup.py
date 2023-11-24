@@ -24,17 +24,18 @@ import json
 from datetime import datetime
 
 from mojo.results.model.resulttype import ResultType
+from mojo.results.model.resultcontainer import ResultContainer
 
 from mojo.xmods.xdatetime import format_datetime_with_fractional
 
 
-class TaskingGroup:
+class TaskingGroup(ResultContainer):
     """
         The :class:`TaskingGroup` instances are group nodes that are used to link result nodes in the
         result tree.  The :class:`TaskingGroup` nodes do not contain result data but link data so the data can
         be computed on demand.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType):
+    def __init__(self, inst_id: str, name: str, parent_inst: str):
         """
             Creates an instance of a result group.
 
@@ -43,43 +44,11 @@ class TaskingGroup:
             :param parent_inst: The unique identifier fo this result nodes parent.
             :param result_type: The type :class:`ResultType` type code of result group.
         """
-        super().__init__()
+        super().__init__(inst_id, name, ResultType.TASKING_GROUP, parent_inst=parent_inst)
 
-        self._inst_id = inst_id
-        self._name = name
-        self._parent_inst = parent_inst
-        self._result_type = result_type
         self._start = datetime.now()
         self._stop = None
         return
-
-    @property
-    def parent_inst(self) -> str:
-        """
-            The unique identifier fo this result nodes parent.
-        """
-        return self._parent_inst
-
-    @property
-    def inst_id(self) -> str:
-        """
-            The unique identifier to link this result group with its children.
-        """
-        return self._inst_id
-
-    @property
-    def name(self) -> str:
-        """
-            The name of the result group.
-        """
-        return self._name
-
-    @property
-    def result_type(self) -> ResultType:
-        """
-            The type :class:`ResultType` type code of result group.
-        """
-        return self._result_type
 
     @property
     def start(self):
@@ -120,13 +89,3 @@ class TaskingGroup:
         ])
 
         return rcinfo
-
-    def to_json(self) -> str:
-        """
-            Converts the result group instance to JSON format.
-        """
-        rcinfo = self.as_dict()
-
-        rcstr = json.dumps(rcinfo, indent=4)
-
-        return rcstr

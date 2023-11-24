@@ -268,6 +268,22 @@ class ResultRecorder:
     def get_summary_render_file_basename(self):
         return "testsummary.html"
 
+    def preview(self, result: ResultNode):
+        """
+            Provides a way to write a preview of a result to a result stream.  When a preview
+            is written to the stream.  We record the result meta data as a preview but we do
+            not include the result in any totals.
+
+            :param result: A result object to be recorded.
+        """
+
+        json_str = result.to_json()
+
+        self._rout.write(CHAR_RECORD_SEPERATOR)
+        self._rout.write(json_str)
+
+        return
+
     def record(self, result: ResultNode):
         """
             Records an entry for the result object that is passed.

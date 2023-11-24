@@ -40,16 +40,14 @@ class ResultNode:
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`ResultContainer` instances and do not contain instance result data.
     """
-    def __init__(self, inst_id: str, name: str, monikers: List[str], pivots: Dict[str, Any], result_type: ResultType,
-                 result_code: ResultCode = ResultCode.UNSET, parent_inst: Optional[str] = None):
+    def __init__(self, inst_id: str, name: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET,
+                 parent_inst: Optional[str] = None):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
 
             :param inst_id: The unique identifier to link this result container with its children.
             :param name: The name of the result container.
-            :param monikers: The names of parameters used to extend the result name.
-            :param pivots: A tuple of data pivots used for result comparisons.
             :param result_type: The type :class:`ResultType` type code of result container.
             :param result_code: The result code to initialize the result node to.
             :param parent_inst: The unique identifier fo this result nodes parent.
@@ -58,34 +56,19 @@ class ResultNode:
 
         self._inst_id = inst_id
         self._name = name
-        self._monikers = monikers
-        self._pivots = pivots
         self._parent_inst = parent_inst
         self._result_code = result_code
         self._result_type = result_type
+
         self._start = datetime.now()
         self._stop = None
+        
         self._errors = []
         self._failures = []
         self._warnings = []
-        self._reason = None
-        self._bug = None
+        
         self._docstr = None
         return
-
-    @property
-    def parent_inst(self):
-        """
-            The unique identifier fo this result nodes parent.
-        """
-        return self._parent_inst
-
-    @property
-    def result_code(self):
-        """
-            The type :class:`ResultType` type code of result container.
-        """
-        return self._result_code
 
     @property
     def inst_id(self):
@@ -102,11 +85,18 @@ class ResultNode:
         return self._name
 
     @property
-    def pivots(self):
+    def parent_inst(self):
         """
-            The name of the result pivots.
+            The unique identifier fo this result nodes parent.
         """
-        return self._pivots
+        return self._parent_inst
+
+    @property
+    def result_code(self):
+        """
+            The type :class:`ResultType` type code of result container.
+        """
+        return self._result_code
 
     @property
     def result_type(self):
@@ -144,13 +134,6 @@ class ResultNode:
         self._warnings.append(trim_lines)
         return
 
-    def set_documentation(self, docstr):
-        """
-            Sets the documentation string associated with this result node.
-        """
-        self._docstr = docstr
-        return
-
     def finalize(self):
         """
             Finalizes the :class:`ResultCode` code for this result node based on whether
@@ -174,15 +157,11 @@ class ResultNode:
         self._result_code = ResultCode.PASSED
         return
 
-    def mark_skip(self, reason: str, bug: str):
+    def set_documentation(self, docstr):
         """
-            Marks this result with a :class:`ResultCode` of ResultCode.SKIPPED
-
-            :param reason: The reason the task or test this result is associated with was skipped.
+            Sets the documentation string associated with this result node.
         """
-        self._reason = reason
-        self._bug = bug
-        self._result_code = ResultCode.SKIPPED
+        self._docstr = docstr
         return
 
     def as_dict(self) -> collections.OrderedDict:
@@ -198,13 +177,6 @@ class ResultNode:
             ("warnings", self._warnings)
         ]
 
-        if self._reason is not None:
-            detail_items.append(("reason", self._reason))
-        
-        if self._bug is not None:
-            detail_items.append(("bug", self._bug))
-        
-
         detail = collections.OrderedDict(detail_items)
 
         if self._docstr is not None:
@@ -218,8 +190,6 @@ class ResultNode:
 
         rninfo = collections.OrderedDict([
             ("name", self._name),
-            ("monikers", self._monikers),
-            ("pivots", self._pivots),
             ("instance", self._inst_id),
             ("parent", self._parent_inst),
             ("rtype", self._result_type.name),

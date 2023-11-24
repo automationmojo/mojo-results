@@ -47,13 +47,6 @@ class ResultContainer:
         return
 
     @property
-    def parent_inst(self) -> str:
-        """
-            The unique identifier fo this result nodes parent.
-        """
-        return self._parent_inst
-
-    @property
     def inst_id(self) -> str:
         """
             The unique identifier to link this result container with its children.
@@ -66,6 +59,13 @@ class ResultContainer:
             The name of the result container.
         """
         return self._name
+
+    @property
+    def parent_inst(self) -> str:
+        """
+            The unique identifier fo this result nodes parent.
+        """
+        return self._parent_inst
 
     @property
     def result_type(self) -> ResultType:
