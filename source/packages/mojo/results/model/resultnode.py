@@ -17,11 +17,10 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Any, Dict, List, Optional
+from typing import List
 
 import collections
 import json
-import time
 
 from datetime import datetime
 

@@ -16,10 +16,8 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Optional
 
 import collections
-import json
 
 from datetime import datetime
 
