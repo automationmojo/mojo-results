@@ -42,8 +42,8 @@ class ResultContainer:
 
         self._inst_id = inst_id
         self._name = name
-        self._parent_inst = parent_inst
         self._result_type = result_type
+        self._parent_inst = parent_inst
         return
 
     @property

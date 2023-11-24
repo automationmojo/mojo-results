@@ -40,25 +40,24 @@ class ResultNode:
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`ResultContainer` instances and do not contain instance result data.
     """
-    def __init__(self, inst_id: str, name: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET,
-                 parent_inst: Optional[str] = None):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, result_type: ResultType, result_code: ResultCode = ResultCode.UNSET):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
 
             :param inst_id: The unique identifier to link this result container with its children.
             :param name: The name of the result container.
+            :param parent_inst: The unique identifier fo this result nodes parent.
             :param result_type: The type :class:`ResultType` type code of result container.
             :param result_code: The result code to initialize the result node to.
-            :param parent_inst: The unique identifier fo this result nodes parent.
         """
         super().__init__()
 
         self._inst_id = inst_id
         self._name = name
         self._parent_inst = parent_inst
-        self._result_code = result_code
         self._result_type = result_type
+        self._result_code = result_code
 
         self._start = datetime.now()
         self._stop = None

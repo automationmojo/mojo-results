@@ -42,7 +42,6 @@ class TaskingGroup(ResultContainer):
             :param inst_id: The unique identifier to link this result group with its children.
             :param name: The name of the result group.
             :param parent_inst: The unique identifier fo this result nodes parent.
-            :param result_type: The type :class:`ResultType` type code of result group.
         """
         super().__init__(inst_id, name, ResultType.TASKING_GROUP, parent_inst=parent_inst)
 

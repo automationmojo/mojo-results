@@ -60,11 +60,10 @@ class TaskingResult(ResultNode):
             :param inst_id: The unique identifier for this task node.
             :param name: The name of the result container.
             :param parent_inst: The unique identifier fo this result nodes parent.
-            :param result_type: The type :class:`ResultType` type code of result container.
             :param result_code: The result code to initialize the result node to.
             :param prefix: A prefix for the tasking output folder.
         """
-        super().__init__(inst_id, name, ResultType.TASKING, result_code=result_code, parent_inst=parent_inst)
+        super().__init__(inst_id, name, parent_inst, ResultType.TASKING, result_code=result_code)
 
         self._prefix = prefix        
         return

@@ -1,8 +1,8 @@
 """
-.. module:: testcontainer
+.. module:: jobcontainer
     :platform: Darwin, Linux, Unix, Windows
-    :synopsis: Module containing the :class:`TestContainer` object used to serve as a
-               tree node container for children of type TEST.
+    :synopsis: Module containing the :class:`JobContainer` object used to serve as a
+               tree node container for children of type JOB.
 
 .. moduleauthor:: Myron Walker <myron.walker@gmail.com>
 """
@@ -21,19 +21,17 @@ from typing import Optional
 from mojo.results.model.resulttype import ResultType
 from mojo.results.model.resultcontainer import ResultContainer
 
-class TestContainer(ResultContainer):
+class JobContainer(ResultContainer):
     """
-        The :class:`TestContainer` instances are container nodes that are used to link result nodes in the
-        result tree.  The :class:`TestsContainer` nodes do not contain result data but link data so the data can
-        be computed on demand.
+        The :class:`JobContainer` instances are container nodes that are used to link result nodes in the
+        result tree.  The :class:`JobContainer` node is the base node for the tree.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str):
+    def __init__(self, inst_id: str, name: str):
         """
             Creates an instance of a result container.
 
             :param inst_id: The unique identifier to link this result container with its children.
             :param name: The name of the result container.
-            :param parent_inst: The unique identifier fo this result nodes parent.
         """
-        super().__init__(inst_id, name, ResultType.TEST_CONTAINER, parent_inst=parent_inst)
+        super().__init__(inst_id, name, ResultType.JOB, parent_inst=None)
         return
