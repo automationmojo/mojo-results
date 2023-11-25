@@ -69,39 +69,75 @@ class ResultNode:
         return
 
     @property
-    def inst_id(self):
+    def docstr(self):
+        """
+            Returns the documentation string associated with the tasking.
+        """
+        return self._docstr
+
+    @property
+    def errors(self) -> List[str]:
+        """
+            Returns the list of errors assocated with this result
+        """
+        return self._errors
+    
+    @property
+    def failures(self) -> List[str]:
+        """
+            Returns the list of failures assocated with this result
+        """
+        return self._failures
+
+    @property
+    def inst_id(self) -> str:
         """
             The unique identifier to link this result container with its children.
         """
         return self._inst_id
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
             The name of the result item.
         """
         return self._name
 
     @property
-    def parent_inst(self):
+    def parent_inst(self) -> str:
         """
             The unique identifier fo this result nodes parent.
         """
         return self._parent_inst
 
     @property
-    def result_code(self):
+    def result_code(self) -> ResultCode:
         """
             The type :class:`ResultType` type code of result container.
         """
         return self._result_code
 
     @property
-    def result_type(self):
+    def result_type(self) -> ResultType:
         """
             The :class:`ResultType` code associated with this result node.
         """
         return self._result_type
+    
+    @property
+    def start(self) -> datetime:
+        return self._start
+    
+    @property
+    def stop(self) -> datetime:
+        return self._stop
+
+    @property
+    def warnings(self) -> List[str]:
+        """
+            Returns the list of warnings assocated with this result
+        """
+        return self._warnings
 
     def add_error(self, trace_detail: TracebackDetail):
         """
