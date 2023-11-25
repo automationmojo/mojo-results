@@ -74,7 +74,7 @@ class ResultContainer:
         """
         return self._result_type
 
-    def as_dict(self) -> collections.OrderedDict:
+    def as_dict(self, is_preview: bool = False) -> collections.OrderedDict:
         """
             Converts the result container instance to an :class:`collections.OrderedDict` object.
         """
@@ -87,11 +87,11 @@ class ResultContainer:
 
         return rcinfo
 
-    def to_json(self) -> str:
+    def to_json(self, is_preview: bool = False) -> str:
         """
             Converts the result container instance to JSON format.
         """
-        rcinfo = self.as_dict()
+        rcinfo = self.as_dict(is_preview=is_preview)
 
         rcstr = json.dumps(rcinfo, indent=4)
 

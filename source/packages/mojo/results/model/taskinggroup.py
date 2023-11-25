@@ -65,7 +65,7 @@ class TaskingGroup(ResultContainer):
         self._stop = datetime.now()
         return
 
-    def as_dict(self) -> collections.OrderedDict:
+    def as_dict(self, is_preview: bool = False) -> collections.OrderedDict:
         """
             Converts the result group instance to an :class:`collections.OrderedDict` object.
         """

@@ -69,23 +69,10 @@ class TaskingResult(ResultNode):
         """
         return self._prefix
 
-    def as_dict(self) -> collections.OrderedDict:
+    def as_dict(self, is_preview: bool = False) -> collections.OrderedDict:
         """
             Converts the result node instance to an :class:`collections.OrderedDict` object.
         """
-        errors = [dataclass_as_dict(e) for e in self._errors]
-        failures = [dataclass_as_dict(f) for f in self._failures]
-
-        detail_items = [
-            ("errors", errors),
-            ("failures", failures),
-            ("warnings", self._warnings)
-        ]
-
-        detail = collections.OrderedDict(detail_items)
-
-        if self._docstr is not None:
-            detail["documentation"] =  self._docstr
 
         start_datetime = format_datetime_with_fractional(self._start)
 
@@ -101,9 +88,26 @@ class TaskingResult(ResultNode):
             ("result", self._result_code.name),
             ("prefix", self._prefix),
             ("start", start_datetime),
-            ("stop", stop_datetime),
-            ("detail", detail)
+            ("stop", stop_datetime)
         ])
+
+        if not is_preview:
+            
+            errors = [dataclass_as_dict(e) for e in self._errors]
+            failures = [dataclass_as_dict(f) for f in self._failures]
+
+            detail_items = [
+                ("errors", errors),
+                ("failures", failures),
+                ("warnings", self._warnings)
+            ]
+
+            detail = collections.OrderedDict(detail_items)
+
+            if self._docstr is not None:
+                detail["documentation"] =  self._docstr
+
+            rninfo["detail"] = detail
 
         return rninfo
 
