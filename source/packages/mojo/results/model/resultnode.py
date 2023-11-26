@@ -179,7 +179,7 @@ class ResultNode:
             self._result_code = ResultCode.FAILED
         elif len(self._errors) > 0:
             self._result_code = ResultCode.ERRORED
-        elif self._result_code == ResultCode.UNSET:
+        elif self._result_code == ResultCode.UNSET or self._result_code == ResultCode.PASSED:
             self._result_code = ResultCode.PASSED
         else:
             self._result_code = ResultCode.UNKOWN
