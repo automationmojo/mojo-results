@@ -284,7 +284,7 @@ class ResultRecorder:
 
         return
 
-    def record(self, result: ResultNode):
+    def record(self, result: ResultNode, is_preview: bool = False):
         """
             Records an entry for the result object that is passed.
 
