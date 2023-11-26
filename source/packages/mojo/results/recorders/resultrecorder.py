@@ -277,21 +277,21 @@ class ResultRecorder:
             :param result: A result object to be recorded.
         """
 
-        json_str = result.to_json()
+        json_str = result.to_json(is_preview=True)
 
         self._rout.write(CHAR_RECORD_SEPERATOR)
         self._rout.write(json_str)
 
         return
 
-    def record(self, result: ResultNode, is_preview: bool = False):
+    def record(self, result: ResultNode):
         """
             Records an entry for the result object that is passed.
 
             :param result: A result object to be recorded.
         """
         
-        json_str = result.to_json()
+        json_str = result.to_json(is_preview=False)
 
         self._rout.write(CHAR_RECORD_SEPERATOR)
         self._rout.write(json_str)
