@@ -46,7 +46,7 @@ class TaskingResult(ResultNode):
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str, result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, worker: str, result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
@@ -54,11 +54,13 @@ class TaskingResult(ResultNode):
             :param inst_id: The unique identifier for this task node.
             :param name: The name of the result container.
             :param parent_inst: The unique identifier fo this result nodes parent.
+            :param worker: The name or host of the work machine that performed the tasking.
             :param result_code: The result code to initialize the result node to.
             :param prefix: A prefix for the tasking output folder.
         """
         super().__init__(inst_id, name, parent_inst, ResultType.TASKING, result_code=result_code)
 
+        self._worker = worker
         self._prefix = prefix        
         return
 
@@ -68,6 +70,13 @@ class TaskingResult(ResultNode):
             The prefix that will be used for the tasking output folder.
         """
         return self._prefix
+
+    @property
+    def worker(self):
+        """
+            The worker that will be used to execute the tasking.
+        """
+        return self._worker
 
     def as_dict(self, is_preview: bool = False) -> collections.OrderedDict:
         """
@@ -87,6 +96,7 @@ class TaskingResult(ResultNode):
             ("rtype", self._result_type.name),
             ("result", self._result_code.name),
             ("prefix", self._prefix),
+            ("worker", self._worker),
             ("start", start_datetime),
             ("stop", stop_datetime)
         ])
@@ -126,7 +136,7 @@ def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
         stop_datetime = format_datetime_with_fractional(result.stop)
 
     task_lines = [
-        f"Task - {result.name}",
+        f"Task - {result.name} ({result.worker})",
         f"instance: {result.inst_id}",
         f"parent: {result.parent_inst}",
         f"rtype: {result.result_type.name}",
