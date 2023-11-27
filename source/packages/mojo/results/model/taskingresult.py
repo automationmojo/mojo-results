@@ -29,6 +29,10 @@ from mojo.errors.exceptions import (
     TaskingGroupCancelled,
     TaskingGroupRuntimeError
 )
+from mojo.errors.xtraceback import (
+    format_traceback_detail
+)
+
 
 from mojo.xmods.xdatetime import format_datetime_with_fractional
 from mojo.xmods.xformatting import indent_lines_list
@@ -148,7 +152,7 @@ def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
 
     error_lines = []
     for item in result.errors:
-        error_lines.extend(item)
+        error_lines.extend(format_traceback_detail(item))
         error_lines.append("")
 
     error_lines = indent_lines_list(error_lines, level=1)
@@ -159,7 +163,7 @@ def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
 
     failure_lines = []
     for item in result.failures:
-        failure_lines.extend(item)
+        failure_lines.extend(format_traceback_detail(item))
         failure_lines.append("")
 
     failure_lines = indent_lines_list(failure_lines, level=1)
