@@ -33,7 +33,11 @@ from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resultnode import ResultNode
 from mojo.results.model.resulttype import ResultType
 
+from mojo.results.utilities import catalog_tree
+
 from mojo.results.recorders.resultrecorder import ResultRecorder
+
+
 
 
 class JsonResultRecorder(ResultRecorder):
@@ -74,6 +78,8 @@ class JsonResultRecorder(ResultRecorder):
         self._rout.write(json_str)
         self._rout.flush()
 
+        catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
+
         return
 
     def record(self, result: ResultNode):
@@ -108,6 +114,8 @@ class JsonResultRecorder(ResultRecorder):
         finally:
             self._lock.release()
 
+        catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
+
         return
 
     def update_summary(self):
@@ -117,6 +125,8 @@ class JsonResultRecorder(ResultRecorder):
 
         with open(self._render_info.summary_filename, 'w') as sout:
             json.dump(self._summary, sout, indent=4)
+
+        catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
 
         return
     

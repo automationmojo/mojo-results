@@ -270,8 +270,9 @@ class ResultRecorder:
         summary_html_source = self._render_info.summary_template
         summary_render_html_base = self.get_summary_render_file_basename()
         summary_render_html_dest = os.path.join(self._output_dir, summary_render_html_base)
-        catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
         shutil.copy2(summary_html_source, summary_render_html_dest)
+
+        catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
 
         return
 
