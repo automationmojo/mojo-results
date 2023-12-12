@@ -141,7 +141,10 @@ class ResultRecorder:
         """
             Starts up the recording process of test results.
         """
+        self.initialize_report()
+
         self.update_summary()
+        
         self._rout = open(self._render_info.result_filename, 'w')
         return self
 
@@ -202,14 +205,6 @@ class ResultRecorder:
 
             self._rout.close()
 
-            self.update_render_environment()
-
-            summary_html_source = self._render_info.summary_template
-            summary_render_html_base = self.get_summary_render_file_basename()
-            summary_render_html_dest = os.path.join(self._output_dir, summary_render_html_base)
-            catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
-            shutil.copy2(summary_html_source, summary_render_html_dest)
-
             self.update_summary()
 
         finally:
@@ -268,6 +263,18 @@ class ResultRecorder:
     def get_summary_render_file_basename(self):
         return "testsummary.html"
 
+    def initialize_report(self):
+
+        self.update_render_environment()
+
+        summary_html_source = self._render_info.summary_template
+        summary_render_html_base = self.get_summary_render_file_basename()
+        summary_render_html_dest = os.path.join(self._output_dir, summary_render_html_base)
+        catalog_tree(self._output_dir, ignore_dirs=["__pycache__"])
+        shutil.copy2(summary_html_source, summary_render_html_dest)
+
+        return
+
     def preview(self, result: ResultNode):
         """
             Provides a way to write a preview of a result to a result stream.  When a preview
@@ -276,13 +283,7 @@ class ResultRecorder:
 
             :param result: A result object to be recorded.
         """
-
-        json_str = result.to_json(is_preview=True)
-
-        self._rout.write(CHAR_RECORD_SEPERATOR)
-        self._rout.write(json_str)
-
-        return
+        raise NotOverloadedError("The 'preview' method must be overridden by derived 'ResultRecorder' objects.") from None
 
     def record(self, result: ResultNode):
         """
@@ -290,32 +291,7 @@ class ResultRecorder:
 
             :param result: A result object to be recorded.
         """
-        
-        json_str = result.to_json(is_preview=False)
-
-        self._rout.write(CHAR_RECORD_SEPERATOR)
-        self._rout.write(json_str)
-
-        self._lock.acquire()
-        try:
-            if result.result_type == ResultType.TEST:
-                self._total_count += 1
-
-                result_code = result.result_code
-                if result_code == ResultCode.PASSED:
-                    self._pass_count += 1
-                elif result_code == ResultCode.ERRORED:
-                    self._error_count += 1
-                elif result_code == ResultCode.FAILED:
-                    self._failure_count += 1
-                elif result_code == ResultCode.SKIPPED:
-                    self._skip_count += 1
-                else:
-                    self._unknown_count += 1
-        finally:
-            self._lock.release()
-
-        return
+        raise NotOverloadedError("The 'record' method must be overridden by derived 'ResultRecorder' objects.") from None
 
     
     def post_task_progress(self, progress: ProgressInfo):

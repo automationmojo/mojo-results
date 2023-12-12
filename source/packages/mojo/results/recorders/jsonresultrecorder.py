@@ -22,11 +22,16 @@ import json
 
 from datetime import datetime
 
+from mojo.xmods.jsos import CHAR_RECORD_SEPERATOR
 
 from mojo.results.model.buildinfo import BuildInfo
 from mojo.results.model.jobinfo import JobInfo
 from mojo.results.model.pipelineinfo import PipelineInfo
 from mojo.results.model.renderinfo import RenderInfo
+
+from mojo.results.model.resultcode import ResultCode
+from mojo.results.model.resultnode import ResultNode
+from mojo.results.model.resulttype import ResultType
 
 from mojo.results.recorders.resultrecorder import ResultRecorder
 
@@ -52,6 +57,55 @@ class JsonResultRecorder(ResultRecorder):
         """
         super(JsonResultRecorder, self).__init__(runid=runid, start=start, render_info=render_info, apod=apod,
                                                  build_info=build_info, pipeline_info=pipeline_info, job_info=job_info)
+        return
+
+    def preview(self, result: ResultNode):
+        """
+            Provides a way to write a preview of a result to a result stream.  When a preview
+            is written to the stream.  We record the result meta data as a preview but we do
+            not include the result in any totals.
+
+            :param result: A result object to be recorded.
+        """
+
+        json_str = result.to_json(is_preview=True)
+
+        self._rout.write(CHAR_RECORD_SEPERATOR)
+        self._rout.write(json_str)
+
+        return
+
+    def record(self, result: ResultNode):
+        """
+            Records an entry for the result object that is passed.
+
+            :param result: A result object to be recorded.
+        """
+        
+        json_str = result.to_json(is_preview=False)
+
+        self._rout.write(CHAR_RECORD_SEPERATOR)
+        self._rout.write(json_str)
+
+        self._lock.acquire()
+        try:
+            if result.result_type == ResultType.TEST:
+                self._total_count += 1
+
+                result_code = result.result_code
+                if result_code == ResultCode.PASSED:
+                    self._pass_count += 1
+                elif result_code == ResultCode.ERRORED:
+                    self._error_count += 1
+                elif result_code == ResultCode.FAILED:
+                    self._failure_count += 1
+                elif result_code == ResultCode.SKIPPED:
+                    self._skip_count += 1
+                else:
+                    self._unknown_count += 1
+        finally:
+            self._lock.release()
+
         return
 
     def update_summary(self):
