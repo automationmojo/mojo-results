@@ -41,4 +41,9 @@ def catalog_tree(rootdir: str, ignore_dirs=[]):
             with open(catalogfile, 'w') as cf:
                 json.dump(catalog, cf, indent=4)
 
+            for child_dir in dirnames:
+                child_dir_full = os.path.join(dirpath, child_dir)
+                catalog_tree(child_dir_full, ignore_dirs=ignore_dirs)
+
     return
+
