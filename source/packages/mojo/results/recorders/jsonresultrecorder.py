@@ -72,6 +72,7 @@ class JsonResultRecorder(ResultRecorder):
 
         self._rout.write(CHAR_RECORD_SEPERATOR)
         self._rout.write(json_str)
+        self._rout.flush()
 
         return
 
@@ -86,6 +87,7 @@ class JsonResultRecorder(ResultRecorder):
 
         self._rout.write(CHAR_RECORD_SEPERATOR)
         self._rout.write(json_str)
+        self._rout.flush()
 
         self._lock.acquire()
         try:
