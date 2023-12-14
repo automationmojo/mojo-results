@@ -19,7 +19,12 @@ __license__ = "MIT"
 import os
 import json
 
-def catalog_tree(rootdir: str, ignore_dirs=[]):
+DEFAULT_IGNORE_DIRS= [
+    "__pycache__",
+    "diagnostics"
+]
+
+def catalog_tree(rootdir: str, ignore_dirs=DEFAULT_IGNORE_DIRS):
     """
         Adds json catalog files to a file system tree to help provide directory
         services to javascript in html files.
