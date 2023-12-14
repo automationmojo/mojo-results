@@ -40,19 +40,21 @@ def catalog_tree(rootdir: str, dont_catalog_dirs: List[str] = DEFAULT_DO_NOT_CAT
     dirnames = []
     filenames = []
 
-    for ditem in directory_items:
+    for dentry in directory_items:
 
-        if ditem == "." or ditem == "..":
+        if dentry == "." or dentry == "..":
             continue
 
-        if os.path.isfile(ditem):
-            filenames.append(ditem)
-        elif os.path.isdir(ditem):
-            if ditem not in dont_catalog_dirs:
-                dirnames.append(ditem)
+        dentry_full = os.path.join(rootdir, dentry)
+
+        if os.path.isfile(dentry_full):
+            filenames.append(dentry)
+        elif os.path.isdir(dentry_full):
+            if dentry not in dont_catalog_dirs:
+                dirnames.append(dentry)
         
-            if ditem not in dont_descend_dirs:
-                child_dir_full = os.path.join(rootdir, ditem)
+            if dentry not in dont_descend_dirs:
+                child_dir_full = os.path.join(rootdir, dentry)
                 catalog_tree(child_dir_full, dont_catalog_dirs, dont_descend_dirs)
 
     # Don't write the catalog file untile we have walked a directory
