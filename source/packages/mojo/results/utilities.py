@@ -35,7 +35,7 @@ def catalog_tree(rootdir: str, dont_catalog_dirs: List[str] = DEFAULT_DO_NOT_CAT
         services to javascript in html files.
     """
 
-    directory_items = [item for item in os.listdir()]
+    directory_items = [item for item in os.listdir(rootdir)]
 
     dirnames = []
     filenames = []
