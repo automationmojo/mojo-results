@@ -54,8 +54,8 @@ def catalog_tree(rootdir: str, dont_catalog_dirs: List[str] = DEFAULT_DO_NOT_CAT
                 dirnames.append(dentry)
         
             if dentry not in dont_descend_dirs:
-                child_dir_full = os.path.join(rootdir, dentry)
-                catalog_tree(child_dir_full, dont_catalog_dirs, dont_descend_dirs)
+                if not os.path.islink(dentry_full):
+                    catalog_tree(dentry_full, dont_catalog_dirs, dont_descend_dirs)
 
     # Don't write the catalog file untile we have walked a directory
     catalog = {
