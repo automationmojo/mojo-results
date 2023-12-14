@@ -15,7 +15,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
-from typing import Dict, List
+from typing import List
 
 import os
 import json
@@ -36,6 +36,7 @@ def catalog_tree(rootdir: str, dont_catalog_dirs: List[str] = DEFAULT_DO_NOT_CAT
     """
 
     directory_items = [item for item in os.listdir(rootdir)]
+    directory_items.sort()
 
     dirnames = []
     filenames = []

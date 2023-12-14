@@ -33,8 +33,6 @@ from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resultnode import ResultNode
 from mojo.results.model.resulttype import ResultType
 
-from mojo.results.utilities import catalog_tree
-
 from mojo.results.recorders.resultrecorder import ResultRecorder
 
 
