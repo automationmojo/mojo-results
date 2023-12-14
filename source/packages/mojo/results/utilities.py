@@ -15,6 +15,7 @@ __email__ = "myron.walker@gmail.com"
 __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
+from typing import Dict, List
 
 import os
 import json
@@ -27,32 +28,43 @@ DEFAULT_DO_NOT_DESCEND_DIRS = [
     "diagnostics"
 ]
 
-def catalog_tree(rootdir: str, dont_catalog_dirs=DEFAULT_DO_NOT_CATALOG_DIRS, dont_descend_dirs=DEFAULT_DO_NOT_DESCEND_DIRS):
+def catalog_tree(rootdir: str, dont_catalog_dirs: List[str] = DEFAULT_DO_NOT_CATALOG_DIRS,
+                 dont_descend_dirs: List[str] = DEFAULT_DO_NOT_DESCEND_DIRS):
     """
         Adds json catalog files to a file system tree to help provide directory
         services to javascript in html files.
     """
-    for dirpath, dirnames, filenames in os.walk(rootdir, topdown=True):
-        dir_base_name = os.path.basename(dirpath)
-        if dir_base_name not in dont_catalog_dirs:
 
-            for igdir in dont_catalog_dirs:
-                if igdir in dirnames:
-                    dirnames.remove(igdir)
+    directory_items = [item for item in os.listdir()]
 
-            catalog = {
-                "files": filenames,
-                "folders": dirnames
-            }
+    dirnames = []
+    filenames = []
 
-            catalogfile = os.path.join(dirpath, "catalog.json")
-            with open(catalogfile, 'w') as cf:
-                json.dump(catalog, cf, indent=4)
+    for ditem in directory_items:
 
-            for child_dir in dirnames:
-                if child_dir not in dont_descend_dirs:
-                    child_dir_full = os.path.join(dirpath, child_dir)
-                    catalog_tree(child_dir_full, dont_catalog_dirs=dont_catalog_dirs, dont_descend_dirs=dont_descend_dirs)
+        if ditem == "." or ditem == "..":
+            continue
+
+        if os.path.isfile(ditem):
+            filenames.append(ditem)
+        elif os.path.isdir(ditem):
+            if ditem not in dont_catalog_dirs:
+                dirnames.append(ditem)
+        
+            if ditem not in dont_descend_dirs:
+                child_dir_full = os.path.join(rootdir, ditem)
+                catalog_tree(child_dir_full, dont_catalog_dirs, dont_descend_dirs)
+
+    # Don't write the catalog file untile we have walked a directory
+    catalog = {
+        "files": filenames,
+        "folders": dirnames
+    }
+
+    catalogfile = os.path.join(rootdir, "catalog.json")
+
+    with open(catalogfile, 'w') as cf:
+        json.dump(catalog, cf, indent=4)
 
     return
 
