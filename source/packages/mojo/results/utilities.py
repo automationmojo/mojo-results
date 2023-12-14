@@ -19,21 +19,24 @@ __license__ = "MIT"
 import os
 import json
 
-DEFAULT_IGNORE_DIRS= [
-    "__pycache__",
+DEFAULT_DO_NOT_CATALOG_DIRS = [
+    "__pycache__"
+]
+
+DEFAULT_DO_NOT_DESCEND_DIRS = [
     "diagnostics"
 ]
 
-def catalog_tree(rootdir: str, ignore_dirs=DEFAULT_IGNORE_DIRS):
+def catalog_tree(rootdir: str, dont_catalog_dirs=DEFAULT_DO_NOT_CATALOG_DIRS, dont_descend_dirs=DEFAULT_DO_NOT_DESCEND_DIRS):
     """
         Adds json catalog files to a file system tree to help provide directory
         services to javascript in html files.
     """
     for dirpath, dirnames, filenames in os.walk(rootdir, topdown=True):
         dir_base_name = os.path.basename(dirpath)
-        if dir_base_name not in ignore_dirs:
+        if dir_base_name not in dont_catalog_dirs:
 
-            for igdir in ignore_dirs:
+            for igdir in dont_catalog_dirs:
                 if igdir in dirnames:
                     dirnames.remove(igdir)
 
@@ -47,8 +50,9 @@ def catalog_tree(rootdir: str, ignore_dirs=DEFAULT_IGNORE_DIRS):
                 json.dump(catalog, cf, indent=4)
 
             for child_dir in dirnames:
-                child_dir_full = os.path.join(dirpath, child_dir)
-                catalog_tree(child_dir_full, ignore_dirs=ignore_dirs)
+                if child_dir not in dont_descend_dirs:
+                    child_dir_full = os.path.join(dirpath, child_dir)
+                    catalog_tree(child_dir_full, dont_catalog_dirs=dont_catalog_dirs, dont_descend_dirs=dont_descend_dirs)
 
     return
 

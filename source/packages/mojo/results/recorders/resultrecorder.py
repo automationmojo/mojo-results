@@ -41,7 +41,11 @@ from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resultnode import ResultNode
 from mojo.results.model.resulttype import ResultType
 
-from mojo.results.utilities import catalog_tree, DEFAULT_IGNORE_DIRS
+from mojo.results.utilities import (
+    catalog_tree,
+    DEFAULT_DO_NOT_CATALOG_DIRS,
+    DEFAULT_DO_NOT_DESCEND_DIRS
+)
 
 from mojo.results.model.progresscode import ProgressCode
 from mojo.results.model.progressinfo import ProgressInfo
@@ -182,7 +186,8 @@ class ResultRecorder:
             A method that can be called in order to trigger catalog generation for the
             results output directory.
         """
-        catalog_tree(self._output_dir, ignore_dirs=DEFAULT_IGNORE_DIRS)
+        catalog_tree(self._output_dir, dont_catalog_dirs=DEFAULT_DO_NOT_CATALOG_DIRS,
+                     dont_descend_dirs=DEFAULT_DO_NOT_DESCEND_DIRS)
         return
 
     def finalize(self):
