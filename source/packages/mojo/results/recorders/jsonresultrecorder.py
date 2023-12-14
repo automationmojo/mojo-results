@@ -78,7 +78,7 @@ class JsonResultRecorder(ResultRecorder):
         self._rout.write(json_str)
         self._rout.flush()
 
-        catalog_tree(self._output_dir)
+        self.catalog_output_directory()
 
         return
 
@@ -114,7 +114,7 @@ class JsonResultRecorder(ResultRecorder):
         finally:
             self._lock.release()
 
-        catalog_tree(self._output_dir)
+        self.catalog_output_directory()
 
         return
 
@@ -126,7 +126,7 @@ class JsonResultRecorder(ResultRecorder):
         with open(self._render_info.summary_filename, 'w') as sout:
             json.dump(self._summary, sout, indent=4)
 
-        catalog_tree(self._output_dir)
+        self.catalog_output_directory()
 
         return
     
