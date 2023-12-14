@@ -41,7 +41,7 @@ from mojo.results.model.resultcode import ResultCode
 from mojo.results.model.resultnode import ResultNode
 from mojo.results.model.resulttype import ResultType
 
-from mojo.results.utilities import catalog_tree
+from mojo.results.utilities import catalog_tree, DEFAULT_IGNORE_DIRS
 
 from mojo.results.model.progresscode import ProgressCode
 from mojo.results.model.progressinfo import ProgressInfo
@@ -177,6 +177,14 @@ class ResultRecorder:
 
         return rtnval
 
+    def catalog_output_directory(self):
+        """
+            A method that can be called in order to trigger catalog generation for the
+            results output directory.
+        """
+        catalog_tree(self._output_dir, ignore_dirs=DEFAULT_IGNORE_DIRS)
+        return
+
     def finalize(self):
         """
             Finalizes the test results counters and status of the test run.
@@ -272,7 +280,7 @@ class ResultRecorder:
         summary_render_html_dest = os.path.join(self._output_dir, summary_render_html_base)
         shutil.copy2(summary_html_source, summary_render_html_dest)
 
-        catalog_tree(self._output_dir)
+        self.catalog_output_directory()
 
         return
 
