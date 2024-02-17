@@ -16,7 +16,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Optional
+from typing import List, Optional
 
 from types import TracebackType
 
@@ -308,21 +308,25 @@ class ResultRecorder:
         raise NotOverloadedError("The 'record' method must be overridden by derived 'ResultRecorder' objects.") from None
 
     
-    def post_task_progress(self, progress: ProgressInfo):
+    def post_task_progress(self, progress_list: List[ProgressInfo]):
 
         fwd_summary = None
 
         self._lock.acquire()
         try:
-            if progress.status == ProgressCode.Completed:
-                del self._running_tasks[progress.id]
-            else:
-                self._running_tasks[progress.id] = progress
 
-            if self._forwarding_info is not None:
-                now_time = datetime.now()
-                if self._next_forward_at is None or now_time > self._next_forward_at:
-                    fwd_summary = copy.deepcopy(self._summary)
+            for progress in progress_list:
+                
+                if progress.status == ProgressCode.Completed:
+                    del self._running_tasks[progress.id]
+                else:
+                    self._running_tasks[progress.id] = progress
+
+                if self._forwarding_info is not None:
+                    now_time = datetime.now()
+                    if self._next_forward_at is None or now_time > self._next_forward_at:
+                        fwd_summary = copy.deepcopy(self._summary)
+
         finally:
             self._lock.release()
 

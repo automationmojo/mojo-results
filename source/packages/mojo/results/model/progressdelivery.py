@@ -1,5 +1,5 @@
 
-from typing import Protocol
+from typing import List, Protocol
 
 from dataclasses import dataclass
 
@@ -13,7 +13,7 @@ class ProgressDeliveryMethod:
 
 class TaskingProgressCallback(Protocol):
 
-    def __call__(self, progress: ProgressInfo) -> None: ...
+    def __call__(self, progress: List[ProgressInfo]) -> None: ...
 
 
 @dataclass
