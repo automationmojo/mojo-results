@@ -13,7 +13,7 @@ class ProgressDeliveryMethod:
 
 class TaskingProgressCallback(Protocol):
 
-    def __call__(self, id: str, progress: ProgressInfo) -> None: ...
+    def __call__(self, progress: ProgressInfo) -> None: ...
 
 
 @dataclass
