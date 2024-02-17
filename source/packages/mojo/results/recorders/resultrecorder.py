@@ -332,7 +332,7 @@ class ResultRecorder:
                 if progress.status == ProgressCode.Completed:
                     del self._running_tasks[progress.id]
                 else:
-                    self._running_tasks[progress.id] = progress
+                    self._running_tasks[progress.id] = progress.as_dict()
 
                 if self._forwarding_info is not None:
                     now_time = datetime.now()
