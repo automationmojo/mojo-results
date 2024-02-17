@@ -16,7 +16,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import Optional
+from typing import Any, Optional
 
 import json
 
@@ -34,6 +34,20 @@ from mojo.results.model.resultnode import ResultNode
 from mojo.results.model.resulttype import ResultType
 
 from mojo.results.recorders.resultrecorder import ResultRecorder
+
+
+class JsonResultEncoder(json.JSONEncoder):
+
+    def default(self, obj) -> Any:
+
+        cval = None
+
+        if isinstance(obj, datetime):
+            cval = obj.isoformat()
+        else:
+            cval = json.JSONEncoder.default(self, obj)
+
+        return cval
 
 
 
@@ -122,7 +136,7 @@ class JsonResultRecorder(ResultRecorder):
         """
 
         with open(self._render_info.summary_filename, 'w') as sout:
-            json.dump(self._summary, sout, indent=4)
+            json.dump(self._summary, sout, indent=4, cls=JsonResultEncoder)
 
         self.catalog_output_directory()
 
