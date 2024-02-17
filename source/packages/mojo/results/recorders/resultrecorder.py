@@ -308,6 +308,18 @@ class ResultRecorder:
         raise NotOverloadedError("The 'record' method must be overridden by derived 'ResultRecorder' objects.") from None
 
     
+    def clear_task_progress(self, task_ids: List[str]):
+
+        self._lock.acquire()
+        try:
+            for tid in task_ids:
+                if tid in self._running_tasks:
+                    del self._running_tasks[tid]
+        finally:
+            self._lock.release()
+
+        return
+
     def post_task_progress(self, progress_list: List[ProgressInfo]):
 
         fwd_summary = None
@@ -316,7 +328,7 @@ class ResultRecorder:
         try:
 
             for progress in progress_list:
-                
+
                 if progress.status == ProgressCode.Completed:
                     del self._running_tasks[progress.id]
                 else:
