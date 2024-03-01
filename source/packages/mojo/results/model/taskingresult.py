@@ -50,7 +50,7 @@ class TaskingResult(ResultNode):
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str, worker: str, result: Optional[Any] = None, 
+    def __init__(self, inst_id: str, name: str, parent_inst: str, worker: str, rvalue: Optional[Any] = None, 
                  result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
@@ -60,7 +60,7 @@ class TaskingResult(ResultNode):
             :param name: The name of the result container.
             :param parent_inst: The unique identifier fo this result nodes parent.
             :param worker: The name or host of the work machine that performed the tasking.
-            :param result: An optional value to return for the tasking.
+            :param rvalue: An optional value to return for the tasking.
             :param result_code: The result code to initialize the result node to.
             :param prefix: A prefix for the tasking output folder.
         """
@@ -68,7 +68,7 @@ class TaskingResult(ResultNode):
 
         self._worker = worker
         self._prefix = prefix
-        self._result = None    
+        self._rvalue = None    
         return
 
     @property
@@ -79,11 +79,11 @@ class TaskingResult(ResultNode):
         return self._prefix
 
     @property
-    def result(self):
+    def rvalue(self):
         """
             A value returned by the remote tasking.
         """
-        return self._result
+        return self._rvalue
 
     @property
     def worker(self):
@@ -92,11 +92,11 @@ class TaskingResult(ResultNode):
         """
         return self._worker
 
-    def add_result(self, result: Any):
+    def add_return_value(self, rvalue: Any):
         """
             Add a result to this tasking result.
         """
-        self._result = result
+        self._rvalue = rvalue
         return
 
     def as_dict(self, is_preview: bool = False) -> collections.OrderedDict:
@@ -119,9 +119,13 @@ class TaskingResult(ResultNode):
             ("prefix", self._prefix),
             ("worker", self._worker),
             ("start", start_datetime),
-            ("stop", stop_datetime),
-            ("result", self._result)
+            ("stop", stop_datetime)
         ])
+
+        if hasattr(self._rvalue, "as_dict"):
+            rninfo["rvalue"] = self._rvalue.as_dict()
+        else:
+            rninfo["rvalue"] = self._rvalue
 
         if not is_preview:
             
