@@ -17,7 +17,7 @@ __status__ = "Development" # Prototype, Development or Production
 __license__ = "MIT"
 
 
-from typing import List, Optional, Protocol
+from typing import Any, List, Optional, Protocol
 
 import collections
 import os
@@ -50,7 +50,8 @@ class TaskingResult(ResultNode):
         does not contain results that can be computed by analyzing the relationship of the nodes in the tree.  The nodes that are
         computed are :class:`TaskingGroup` instances and do not contain instance task data.
     """
-    def __init__(self, inst_id: str, name: str, parent_inst: str, worker: str, result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
+    def __init__(self, inst_id: str, name: str, parent_inst: str, worker: str, result: Optional[Any] = None, 
+                 result_code: ResultCode = ResultCode.UNSET, prefix: str="tasking"):
         """
             Initializes an instance of a :class:`ResultNode` object that represent the information associated with
             a specific result in a result tree.
@@ -59,13 +60,15 @@ class TaskingResult(ResultNode):
             :param name: The name of the result container.
             :param parent_inst: The unique identifier fo this result nodes parent.
             :param worker: The name or host of the work machine that performed the tasking.
+            :param result: An optional value to return for the tasking.
             :param result_code: The result code to initialize the result node to.
             :param prefix: A prefix for the tasking output folder.
         """
         super().__init__(inst_id, name, parent_inst, ResultType.TASKING, result_code=result_code)
 
         self._worker = worker
-        self._prefix = prefix        
+        self._prefix = prefix
+        self._result = None    
         return
 
     @property
@@ -74,6 +77,13 @@ class TaskingResult(ResultNode):
             The prefix that will be used for the tasking output folder.
         """
         return self._prefix
+
+    @property
+    def result(self):
+        """
+            A value returned by the remote tasking.
+        """
+        return self._result
 
     @property
     def worker(self):
@@ -102,7 +112,8 @@ class TaskingResult(ResultNode):
             ("prefix", self._prefix),
             ("worker", self._worker),
             ("start", start_datetime),
-            ("stop", stop_datetime)
+            ("stop", stop_datetime),
+            ("result", self._result)
         ])
 
         if not is_preview:
@@ -146,7 +157,8 @@ def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
         f"rtype: {result.result_type.name}",
         f"result: {result.result_code.name}",
         f"start: {start_datetime}",
-        f"stop: {stop_datetime}"
+        f"stop: {stop_datetime}",
+        f"result: {result.result}"
         f"ERRORS:"
     ]
 
