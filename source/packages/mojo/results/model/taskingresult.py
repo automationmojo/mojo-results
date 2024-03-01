@@ -92,6 +92,13 @@ class TaskingResult(ResultNode):
         """
         return self._worker
 
+    def add_result(self, result: Any):
+        """
+            Add a result to this tasking result.
+        """
+        self._result = result
+        return
+
     def as_dict(self, is_preview: bool = False) -> collections.OrderedDict:
         """
             Converts the result node instance to an :class:`collections.OrderedDict` object.
