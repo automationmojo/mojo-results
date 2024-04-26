@@ -30,3 +30,5 @@ class JobInfo:
     owner: Optional[str] = None # Optional owner of the job.
     label: Optional[str] = None # Optional label associated with the job.
     initiator: Optional[str] = None # Optional name of the initiator of the job.
+    venue: Optional[str] = None # Optional identifier of a venue the job was run in.
+    tag: Optional[str] = # Optional correlation tag to associate with the job.

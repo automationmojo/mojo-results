@@ -119,7 +119,9 @@ class ResultRecorder:
             ("label", self._job_info.label),
             ("name", self._job_info.name),
             ("owner", self._job_info.owner),
-            ("type", self._job_info.type)
+            ("type", self._job_info.type),
+            ("venue", self._job_info.venue),
+            ("tag", self._job_info.tag)
         ))
 
         self._summary = collections.OrderedDict((
