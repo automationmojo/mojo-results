@@ -22,6 +22,6 @@ from dataclasses import dataclass
 @dataclass
 class PipelineInfo:
 
-    id: str # identifier such as a uuid which identifies a particular pipeline.
-    name: str # name for the associated pipeline.
+    id: str # identifier such as a uuid which identifies a particular venue associated with the pipeline.
+    name: str # name for the venue associated pipeline.
     instance: str # identifier such as a uuid which identifies an instance of a pipeline.
