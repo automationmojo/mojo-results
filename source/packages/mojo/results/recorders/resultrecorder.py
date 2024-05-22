@@ -117,6 +117,7 @@ class ResultRecorder:
             ("owner", self._job_info.owner),
             ("type", self._job_info.type),
             ("venue", self._job_info.venue),
+            ("seed", self._job_info.seed),
             ("tag", self._job_info.tag)
         ))
 
