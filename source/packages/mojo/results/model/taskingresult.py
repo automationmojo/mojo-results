@@ -221,19 +221,46 @@ def verify_tasking_results(results: List[TaskingResult], context_message: str, g
     if len(unknown_taskings) > 0:
         # We had taskings results of an unknown type so this condition needs to have
         # a runtime error as it should not happen
-        err_msg = f"Tasking group='{group_name}' had unknown results."
+        err_msg_lines = [
+            f"Tasking group='{group_name}' had unknown results."
+            "TASKINGS:"
+        ]
+
+        for res in results:
+            err_msg_lines.append(f"    TaskID: {res.inst_id}")
+        
+        err_msg = os.linesep.join(err_msg_lines)
         raise TaskingGroupRuntimeError(err_msg)
 
     elif len(cancelled_taskings) > 0:
         # All of the tasking result states were of known type, but we had some cancelled
         # taskings, so raise the cancelled error.
-        err_msg = f"Tasking group='{group_name}' had cancelled tasks."
-        raise TaskingGroupCancelled(err_msg)
+        err_msg_lines = [
+            f"Tasking group='{group_name}' had cancelled tasks."
+            "CANCELLED TASKINGS:"
+        ]
+
+        for res in results:
+            err_msg_lines.append(f"    TaskID: {res.inst_id}")
+        
+        err_msg = os.linesep.join(err_msg_lines)
+        raise TaskingGroupRuntimeError(err_msg)
 
     elif len(errored_taskings) > 0:
         # If we had any error tasks, we need to raise a non AssertionError based
         # exception
-        err_msg = f"Tasking group='{group_name}' encountered Non asserted errors."
+        err_msg_lines = [
+            f"Tasking group='{group_name}' encountered Non asserted errors."
+            "ERRORED TASKINGS:"
+        ]
+
+        for res in results:
+            fmt_res_lines = result_formatter(res)
+            fmt_res_lines = indent_lines_list(fmt_res_lines, 1)
+            err_msg_lines.extend(fmt_res_lines)
+            err_msg_lines.append("")
+
+        err_msg = os.linesep.join(err_msg_lines)
         raise TaskingGroupRuntimeError(err_msg)
 
     elif len(failed_taskings) > 0:
