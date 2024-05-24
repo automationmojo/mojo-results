@@ -142,6 +142,12 @@ class TaskingResult(ResultNode):
             rninfo["detail"] = detail
 
         return rninfo
+    
+    def format_result(self) -> List[str]:
+
+        fmt_lines = default_tasking_result_formatter(self)
+
+        return fmt_lines
 
 
 class TaskingResultFormatter(Protocol):
@@ -280,3 +286,4 @@ def verify_tasking_results(results: List[TaskingResult], context_message: str, g
         raise TaskingGroupAssertionError(err_msg)
 
     return
+
