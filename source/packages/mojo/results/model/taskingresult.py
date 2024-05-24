@@ -171,7 +171,6 @@ def default_tasking_result_formatter(result: TaskingResult) -> List[str]:
         f"result: {result.result_code.name}",
         f"start: {start_datetime}",
         f"stop: {stop_datetime}",
-        f"result: {result.result}"
         f"ERRORS:"
     ]
 
