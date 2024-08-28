@@ -131,7 +131,7 @@ class ResultRecorder:
             ("stop", None),
             ("result", "RUNNING"),
             ("apod", self._apod),
-            ("detail", None),
+            ("totals", None),
             ("running", self._running_tasks)
         ))
 
