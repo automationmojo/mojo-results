@@ -122,6 +122,7 @@ class ResultRecorder:
         ))
 
         self._summary = collections.OrderedDict((
+            ("version", "2"),
             ("title", self._render_info.title),
             ("runid", self._runid),
             ("build", build_info),
@@ -200,6 +201,7 @@ class ResultRecorder:
             self._finalized = True
 
             self._stop = datetime.now()
+
             self._summary["stop"] = str(self._stop)
 
             self._summary["detail"] = {
